@@ -43,19 +43,30 @@ def test_successful_login(page):
     login(page, "standard_user", "secret_sauce")
     assert page.url == "https://www.saucedemo.com/inventory.html"
 
-def test_locked_out_user_login(page):
+@pytest.mark.parametrize(
+    "username, password, expected_error",
+    [
+        ("locked_out_user", "secret_sauce", "Epic sadface: Sorry, this user has been locked out."),
+        ("invalid_user", "wrong_password", "Epic sadface: Username and password do not match any user in this service")
+    ]
+)
+def test_negative_logins(page, username, password, expected_error):
     page.goto(URL)
-    login(page, "locked_out_user", "secret_sauce")
-    assert page.locator("[data-test='error']").text_content() == "Epic sadface: Sorry, this user has been locked out."
+    login(page, username, password)
+    error_text = page.locator("[data-test='error']").text_content()
+    assert expected_error in error_text
 
-@pytest.mark.parametrize("name_from_list, id_from_list", [
-    ("Sauce Labs Backpack", "sauce-labs-backpack"),
-    ("Sauce Labs Bolt T-Shirt", "sauce-labs-bolt-t-shirt"),
-    ("Sauce Labs Bike Light", "sauce-labs-bike-light"),
-    ("Sauce Labs Fleece Jacket", "sauce-labs-fleece-jacket"),
-    ("Sauce Labs Onesie", "sauce-labs-onesie"),
-    ("Test.allTheThings() T-Shirt (Red)", "test.allthethings()-t-shirt-(red)")
-])
+@pytest.mark.parametrize(
+    "name_from_list, id_from_list",
+    [
+        ("Sauce Labs Backpack", "sauce-labs-backpack"),
+        ("Sauce Labs Bolt T-Shirt", "sauce-labs-bolt-t-shirt"),
+        ("Sauce Labs Bike Light", "sauce-labs-bike-light"),
+        ("Sauce Labs Fleece Jacket", "sauce-labs-fleece-jacket"),
+        ("Sauce Labs Onesie", "sauce-labs-onesie"),
+        ("Test.allTheThings() T-Shirt (Red)", "test.allthethings()-t-shirt-(red)")
+    ]
+)
 def test_add_and_remove_product_from_cart(page, name_from_list, id_from_list):
     product_name = name_from_list
     product_id = id_from_list
