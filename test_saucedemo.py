@@ -1,6 +1,6 @@
 #Imports
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import sync_playwright, expect
 import pytest
 
 #Test Data
@@ -24,24 +24,23 @@ def open_cart(page):
     page.locator("a.shopping_cart_link").click()
 
 def verify_product_in_cart(page, expected_product_name):
-    cart_products = page.locator("div.inventory_item_name").all_text_contents()
-    assert expected_product_name in cart_products
+    product_locator = page.locator("div.inventory_item_name", has_text=expected_product_name)
+    expect(product_locator).to_be_visible()
 
 def verify_empty_cart(page):
-    assert page.locator(".shopping_cart_badge").count() == 0
+    expect(page.locator(".shopping_cart_badge")).to_be_hidden()
 
 def verify_product_count(page, expected_count):
-    products = page.locator(".inventory_item_name")
-    assert products.count() == expected_count
+    expect(page.locator(".inventory_item_name")).to_have_count(expected_count)
 
 def verify_product_visible(page, product_name):
-    products = page.locator(".inventory_item_name").all_text_contents()
-    assert product_name in products
+    product_locator = page.locator(".inventory_item_name", has_text=product_name)
+    expect(product_locator).to_be_visible()
 
 def test_successful_login(page):
     page.goto(URL)
     login(page, "standard_user", "secret_sauce")
-    assert page.url == "https://www.saucedemo.com/inventory.html"
+    expect(page).to_have_url("https://www.saucedemo.com/inventory.html")
 
 @pytest.mark.parametrize(
     "username, password, expected_error",
@@ -53,8 +52,7 @@ def test_successful_login(page):
 def test_negative_logins(page, username, password, expected_error):
     page.goto(URL)
     login(page, username, password)
-    error_text = page.locator("[data-test='error']").text_content()
-    assert expected_error in error_text
+    expect(page.locator("[data-test='error']")).to_have_text(expected_error)
 
 @pytest.mark.parametrize(
     "name_from_list, id_from_list",
@@ -72,11 +70,10 @@ def test_add_and_remove_product_from_cart(page, name_from_list, id_from_list):
     product_id = id_from_list
     page.goto(URL)
     login(page, "standard_user", "secret_sauce")
-    page.wait_for_timeout(1000)
     verify_product_count(page, 6)
     verify_product_visible(page, product_name)
     add_product_to_cart(page, product_id)
-    assert page.locator(".shopping_cart_badge").text_content() == "1"
+    expect(page.locator(".shopping_cart_badge")).to_have_text("1")
     open_cart(page)
     verify_product_in_cart(page, product_name)
     remove_product_from_cart(page, product_id)
