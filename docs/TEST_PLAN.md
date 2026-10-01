@@ -30,7 +30,6 @@ The test item is the SauceDemo web application, available at: https://www.sauced
 * Target Browser: Chromium
 
 ## 6. Entry & Exit Criteria
-
 ### 6.1 Entry Criteria
 * Access to the Internet
 * Stability and availability of the test environment (SauceDemo website)
