@@ -48,7 +48,7 @@
 | TC_008 | Sauce Labs Fleece Jacket | sauce-labs-fleece-jacket |
 | TC_009 | Sauce Labs Onesie | sauce-labs-onesie |
 | TC_010 | Test.allTheThings() T-Shirt (Red) | test.allthethings()-t-shirt-(red) |
-* **Expected Results:**
+* **Expected Result:**
 1. After Step 2, the shopping cart badge text changes to "1".
 2. After Step 4, the product is visible inside the cart list view with the correct name.
 3. After Step 6, the product is removed from the cart page and the cart badge component becomes hidden.
@@ -80,7 +80,7 @@
 2. Check the browser page URL.
 3. Verify the visibility of the product image, name, description text, and price.
 4. Click the "Back to products" button.
-* **Expected Results:**
+* **Expected Result:**
 1. The application routes to the item view page layout.
 2. All product information components are displayed correctly with no missing data.
 3. The user successfully navigates back to the main inventory view.
